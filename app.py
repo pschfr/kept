@@ -34,5 +34,14 @@ else:
 	fh = open('keep_cache.json', 'w')
 	json.dump(state, fh)
 
+# Now fetch all notes and labels.
+g_all_notes = keep.all()
+g_notes = keep.find(archived=False, trashed=False)
+g_labels = keep.labels()
+
+# Simple loop over notes
+for g_note in g_notes:
+	print(g_note.title)
+
 # sync to be up to date
 keep.sync()
