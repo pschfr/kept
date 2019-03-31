@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Visual Studio Code workspace settings
+.vscode/
+
+# Google Keep API local note cache
+keep_cache.json

@@ -1,14 +1,38 @@
 #!/usr/bin/env python3
 
-# import modules
-from dotenv import load_dotenv
+# import system modules
 import os
-import gkeepapi
+import json
 
-# initiate and authenticate
+# import and initiate dotenv
+from dotenv import load_dotenv
 load_dotenv()
+
+# import and initiate the Google Keep API
+import gkeepapi
 keep = gkeepapi.Keep()
-success = keep.login(os.getenv('GOOGLE_USERNAME'), os.getenv('GOOGLE_PASSWORD'))
+
+# attempt to load note cache from file
+cache_exists = os.path.isfile('keep_cache.json')
+
+# if file exists,
+if cache_exists:
+	# read it...
+	fh = open('keep_cache.json', 'r')
+	# and parse the JSON.
+	state = json.load(fh)
+	# login to Google Keep, passing the cache to login
+	success = keep.login(os.getenv('GOOGLE_USERNAME'), os.getenv('GOOGLE_PASSWORD'), state=state)
+
+# otherwise,
+else:
+	# login to Google Keep first,
+	success = keep.login(os.getenv('GOOGLE_USERNAME'), os.getenv('GOOGLE_PASSWORD'))
+	# then dump the current state
+	state = keep.dump()
+	# and write it to a file.
+	fh = open('keep_cache.json', 'w')
+	json.dump(state, fh)
 
 # sync to be up to date
 keep.sync()
